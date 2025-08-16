@@ -1,18 +1,15 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import useConfigStore from '@renderer/store/useConfigStore'
 
-const sizes = ref(['1920x1080', '1024x720'])
-const size = ref('1920x1080')
-const frames = ref([30, 60])
-const frame = ref(60)
+const { config } = useConfigStore()
 </script>
 
 <template>
   <main class="bg-white p-3 flex gap-2">
     <el-tooltip content="分辨率" effect="light">
-      <el-select v-model="size">
+      <el-select v-model="config.size">
         <el-option
-          v-for="(item, index) in sizes"
+          v-for="(item, index) in config.sizes"
           :key="index"
           :label="item"
           :value="item"
@@ -20,9 +17,9 @@ const frame = ref(60)
       </el-select>
     </el-tooltip>
     <el-tooltip content="帧率" effect="light">
-      <el-select v-model="frame">
+      <el-select v-model="config.frame">
         <el-option
-          v-for="(item, index) in frames"
+          v-for="(item, index) in config.frames"
           :key="index"
           :label="item"
           :value="item"
