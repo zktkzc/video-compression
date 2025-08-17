@@ -1,70 +1,70 @@
 import useConfigStore from '@renderer/store/useConfigStore'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { ref } from 'vue'
+import { VideoState, VideoType } from '@renderer/types'
+import { ElMessage } from 'element-plus'
 
 export default () => {
-  const newValue = ref('')
   const { config } = useConfigStore()
 
-  const addVideoSize = () => {
-    if (config.sizes.includes(newValue.value)) {
-      ElMessage({ message: '该配置已存在', type: 'error', grouping: true })
-      newValue.value = ''
+  const addFile = async () => {
+    let alreadyHas = false
+    const result = await window.api.selectFile()
+    if (result.canceled || result.filePaths.length === 0) return
+    result.filePaths.forEach((filePath) => {
+      if (config.files.map((file) => file.path).includes(filePath)) alreadyHas = true
+    })
+    if (alreadyHas) return
+
+    for (let i = 0; i < result.filePaths.length; i++) {
+      const path = result.filePaths[i]
+      const name = result.filePaths[i].substring(path.lastIndexOf('/') + 1)
+      config.files.push({ name, path, progress: 0, state: VideoState.READY, errorMessage: '' })
+    }
+  }
+
+  const remove = (index: number) => {
+    if (config.files[index].state === VideoState.COMPRESSING) {
+      ElMessage.error({ message: '请等待视频压缩完成', grouping: true })
       return
     }
-
-    config.sizes.push(newValue.value)
-    ElMessage({ message: '添加成功', type: 'success', grouping: true })
-    newValue.value = ''
+    config.files.splice(index, 1)
   }
 
-  const delVideoSize = async (size: string) => {
-    await ElMessageBox.confirm(`确定要删除分辨率${size}吗？`)
-    const index = config.sizes.indexOf(size)
-    if (index > -1) {
-      config.sizes.splice(index, 1)
-      ElMessage({ message: '删除成功', type: 'success', grouping: true })
+  const removeAll = () => {
+    config.files = []
+  }
+
+  const resetErrorVideo = () => {
+    config.files.forEach((file) => {
+      if (file.state !== VideoState.ERROR) return
+      file.state = VideoState.READY
+      file.progress = 0
+    })
+  }
+
+  const getVideoBgColor = (video: VideoType) => {
+    return {
+      [VideoState.COMPRESSING]:
+        'repeating-linear-gradient(-45deg,#c4ff8e 0px,#c4ff8e 10px,#a8ed6a 10px,#a8ed6a 20px)',
+      [VideoState.ERROR]: '#e18068',
+      [VideoState.FINISHED]: '#bee88a'
+    }[video.state]
+  }
+
+  const reset = (index: number) => {
+    if (config.files[index]) {
+      config.files[index].state = VideoState.READY
+      config.files[index].progress = 0
     }
   }
 
-  const addVideoFrame = () => {
-    if (config.frames.includes(newValue.value)) {
-      ElMessage({ message: '该配置已存在', type: 'error', grouping: true })
-      newValue.value = ''
-      return
-    }
-
-    config.frames.push(newValue.value)
-    ElMessage({ message: '添加成功', type: 'success', grouping: true })
-    newValue.value = ''
-  }
-
-  const delVideoFrame = async (frame: string) => {
-    await ElMessageBox.confirm(`确定要删除帧率${frame}吗？`)
-    const index = config.frames.indexOf(frame)
-    if (index > -1) {
-      config.frames.splice(index, 1)
-      ElMessage({ message: '删除成功', type: 'success', grouping: true })
+  const open = async (file: VideoType) => {
+    const result = await window.api.openDirectory(
+      file.path.substring(0, file.path.lastIndexOf('/'))
+    )
+    if (result !== '') {
+      ElMessage.error({ message: result, grouping: true })
     }
   }
 
-  const moveUp = (type: 'size' | 'frame', index: number) => {
-    if (index <= 0) return
-
-    const value = config[type === 'size' ? 'sizes' : 'frames'][index - 1]
-    config[type === 'size' ? 'sizes' : 'frames'][index - 1] =
-      config[type === 'size' ? 'sizes' : 'frames'][index]
-    config[type === 'size' ? 'sizes' : 'frames'][index] = value
-  }
-
-  const moveDown = (type: 'size' | 'frame', index: number) => {
-    if (index >= config[type === 'size' ? 'sizes' : 'frames'].length - 1) return
-
-    const value = config[type === 'size' ? 'sizes' : 'frames'][index + 1]
-    config[type === 'size' ? 'sizes' : 'frames'][index + 1] =
-      config[type === 'size' ? 'sizes' : 'frames'][index]
-    config[type === 'size' ? 'sizes' : 'frames'][index] = value
-  }
-
-  return { newValue, addVideoSize, delVideoSize, addVideoFrame, delVideoFrame, moveUp, moveDown }
+  return { addFile, remove, removeAll, resetAll: resetErrorVideo, getVideoBgColor, reset, open }
 }

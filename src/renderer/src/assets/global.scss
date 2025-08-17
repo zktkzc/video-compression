@@ -1,3 +1,29 @@
 body {
     @apply bg-slate-100;
 }
+
+.drag {
+  -webkit-app-region: drag;
+}
+
+.no-drag,
+input,
+select,
+textarea,
+option {
+  -webkit-app-region: no-drag;
+}
+
+.el-message {
+  padding: 5px 10px !important;
+  gap: 2px !important;
+
+  .el-icon,
+  .el-message__content {
+    font-size: 12px;
+  }
+
+  .el-icon {
+    margin-right: 2px;
+  }
+}

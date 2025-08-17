@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import useConfigStore from '@renderer/store/useConfigStore'
-import { CloseOne, UpC, DownC } from '@icon-park/vue-next'
+import { CloseOne, DownC, UpC } from '@icon-park/vue-next'
 import Card from '@renderer/components/Card.vue'
-import useVideo from '@renderer/composables/useVideo'
+import useVideo from '@renderer/composables/useFpsAndSize'
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 
@@ -30,6 +30,12 @@ const addFrame = () => {
   }
   addVideoFrame()
 }
+
+const selectDirectory = async () => {
+  const result = await window.api.selectDirectory(config.videoSaveDir)
+  if (result.canceled) return
+  config.videoSaveDir = result.filePaths[0]
+}
 </script>
 
 <template>
@@ -45,13 +51,10 @@ const addFrame = () => {
         >
           {{ item }}
           <div class="flex items-center gap-1">
-            <div :class="index === 0 ? 'disabled' : 'up-icon'" :disabled="index === 0">
+            <div :class="index === 0 ? 'disabled' : 'up-icon'">
               <UpC theme="outline" size="12" @click="moveUp('size', index)" />
             </div>
-            <div
-              :class="index === config.sizes.length - 1 ? 'disabled' : 'down-icon'"
-              :disabled="index === config.sizes.length - 1"
-            >
+            <div :class="index === config.sizes.length - 1 ? 'disabled' : 'down-icon'">
               <DownC theme="outline" size="12" @click="moveDown('size', index)" />
             </div>
             <div class="del-icon">
@@ -101,13 +104,10 @@ const addFrame = () => {
         >
           {{ item }}
           <div class="flex items-center gap-1">
-            <div :class="index === 0 ? 'disabled' : 'up-icon'" :disabled="index === 0">
+            <div :class="index === 0 ? 'disabled' : 'up-icon'">
               <UpC theme="outline" size="12" @click="moveUp('frame', index)" />
             </div>
-            <div
-              :class="index === config.frames.length - 1 ? 'disabled' : 'down-icon'"
-              :disabled="index === config.frames.length - 1"
-            >
+            <div :class="index === config.frames.length - 1 ? 'disabled' : 'down-icon'">
               <DownC theme="outline" size="12" @click="moveDown('frame', index)" />
             </div>
             <div class="del-icon">
@@ -129,6 +129,13 @@ const addFrame = () => {
           @keyup.enter="addFrame"
         />
         <el-button type="success" size="default" @click="addFrame">添加</el-button>
+      </div>
+    </Card>
+
+    <Card title="视频保存目录">
+      <div class="flex gap-1">
+        <el-input v-model="config.videoSaveDir" size="default" disabled />
+        <el-button type="warning" size="default" @click="selectDirectory">选择</el-button>
       </div>
     </Card>
   </main>
