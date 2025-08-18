@@ -1,26 +1,36 @@
 # video-compression
 
-An Electron application with Vue and TypeScript
+一个使用Electron+Vue编写的视频压缩小工具
 
-## Recommended IDE Setup
+## 软件界面
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+### 主界面
 
-## Project Setup
+![](assets/主界面.png)
 
-### Install
+### 配置界面
+
+![](assets/配置界面.png)
+
+### 运行效果
+
+![](assets/运行.png)
+
+## 项目初始化
+
+### 安装
 
 ```bash
 $ pnpm install
 ```
 
-### Development
+### 开发
 
 ```bash
 $ pnpm dev
 ```
 
-### Build
+### 编译
 
 ```bash
 # For windows
