@@ -1,7 +1,7 @@
 {
-  "name": "video-compression",
+  "name": "video",
   "version": "1.0.0",
-  "description": "An Electron application with Vue and TypeScript",
+  "description": "视频压缩工具",
   "main": "./out/main/index.js",
   "author": "example.com",
   "homepage": "https://electron-vite.org",
@@ -58,6 +58,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@ffmpeg-installer/darwin-arm64",
       "@ffprobe-installer/darwin-arm64",
       "@parcel/watcher",
       "electron",

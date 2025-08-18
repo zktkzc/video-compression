@@ -22,7 +22,12 @@ const { remove, getVideoBgColor, reset, open } = useVideo()
         <Error
           theme="outline"
           size="12"
-          @click="() => ElMessage.error({ message: video.errorMessage, grouping: true })"
+          @click="
+            () => {
+              if (video.errorMessage !== '')
+                ElMessage.error({ message: video.errorMessage, grouping: true })
+            }
+          "
         />
       </div>
       <div v-if="video.state === VideoState.ERROR" class="retry">

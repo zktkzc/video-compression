@@ -12,7 +12,7 @@ function createWindow(): void {
     show: false,
     frame: false,
     center: true,
-    alwaysOnTop: true,
+    alwaysOnTop: false,
     resizable: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),

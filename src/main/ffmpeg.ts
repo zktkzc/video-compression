@@ -6,8 +6,8 @@ import { CompressOptions, MainProcessNoticeType } from '../renderer/src/types'
 import path from 'path'
 import fs from 'fs'
 
-ffmpeg.setFfmpegPath(ffmpegPath.path)
-ffmpeg.setFfprobePath(ffprobePath.path)
+ffmpeg.setFfmpegPath(ffmpegPath.path.replace('app.asar', 'app.asar.unpacked'))
+ffmpeg.setFfprobePath(ffprobePath.path.replace('app.asar', 'app.asar.unpacked'))
 
 export default class Ffmpeg {
   ffmpeg: ffmpeg.FfmpegCommand
@@ -71,6 +71,7 @@ export default class Ffmpeg {
     }
 
     this.ffmpeg
+      .format('mp4')
       .fps(this.options.fps)
       .size(this.options.size)
       .videoCodec('libx264')
